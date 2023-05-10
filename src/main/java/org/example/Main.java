@@ -15,22 +15,19 @@ class Solution {
             charToLastOccurrence.put(s.charAt(i), i);
         }
 
-        int currentSliceIndex = 0;
-        for(int i = 1 ; i <= s.length() ; ++i){
-            boolean willPartition = true;
-            for(int j = currentSliceIndex ; j < i ; ++j){
+        int maxNextOccurrence = 0;
+        int lastPartition = -1;
+        for(int i = 0 ; i < s.length() ; ++i){
 
-                if(charToLastOccurrence.get(s.charAt(j)) >= i){
-                    willPartition = false;
-                    break;
-                }
+            int currentCharLastOccurrence = charToLastOccurrence.get(s.charAt(i));
+            maxNextOccurrence= Math.max(maxNextOccurrence, currentCharLastOccurrence);
+            if(maxNextOccurrence == i){
+                result.add(i - lastPartition);
+                lastPartition = i;
+                maxNextOccurrence = 0;
+
             }
-            if(willPartition){
 
-                result.add(i - currentSliceIndex);
-
-                currentSliceIndex = i;
-            }
         }
         return result;
     }
@@ -41,7 +38,7 @@ public class Main {
     public static void main(String[] args) {
         Solution s = new Solution();
         int[] arr = {2,1,3,4,4};
-        System.out.println(s.partitionLabels("caedbdedda"));
+        System.out.println(s.partitionLabels("ababcbacadefegdehijhklij"));
 
 
     }
