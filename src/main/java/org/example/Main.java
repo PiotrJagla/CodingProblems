@@ -1,38 +1,47 @@
 package org.example;
 
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 class Solution {
-    public int maxChunksToSorted(int[] arr) {
-        int[] leftMax = new int[arr.length];
-        int[] rightMin = new int[arr.length];
+    public List<Integer> partitionLabels(String s) {
+        List<Integer> result = new ArrayList<>();
 
-        leftMax[0] = arr[0];
-        for(int i = 1 ; i < arr.length ; ++i){
-            leftMax[i] = Math.max(arr[i], leftMax[i-1]);
+        Map<Character, Integer> charToLastOccurrence = new HashMap<>();
+        for(int i =0 ; i < s.length() ; ++i){
+            charToLastOccurrence.put(s.charAt(i), i);
         }
 
-        rightMin[arr.length - 1] = arr[arr.length - 1];
-        for(int i = arr.length - 2 ; i >= 0 ; --i){
-            rightMin[i] = Math.min(arr[i], rightMin[i+1]);
-        }
+        int currentSliceIndex = 0;
+        for(int i = 1 ; i <= s.length() ; ++i){
+            boolean willPartition = true;
+            for(int j = currentSliceIndex ; j < i ; ++j){
 
-        int result = 1;
-        for(int i = 0 ; i < arr.length - 1 ; ++i){
-            if(leftMax[i] <= rightMin[i+1])
-                result++;
-        }
+                if(charToLastOccurrence.get(s.charAt(j)) >= i){
+                    willPartition = false;
+                    break;
+                }
+            }
+            if(willPartition){
 
+                result.add(i - currentSliceIndex);
+
+                currentSliceIndex = i;
+            }
+        }
         return result;
     }
-
 }
+
 
 public class Main {
     public static void main(String[] args) {
         Solution s = new Solution();
-        int[] arr = {0,3,0,3,2};
-        System.out.println(s.maxChunksToSorted(arr));
+        int[] arr = {2,1,3,4,4};
+        System.out.println(s.partitionLabels("caedbdedda"));
 
 
     }
