@@ -4,33 +4,43 @@ package org.example;
 import java.util.*;
 
 class Solution {
-    public List<List<Integer>> groupThePeople(int[] groupSizes) {
+    public int earliestFullBloom(int[] plantTime, int[] growTime) {
+        int result = 0;
 
-        List<Integer> allGroupSizes = new ArrayList<>();
-        for(int i = 0 ; i < groupSizes.length ; ++i){
-            if(allGroupSizes.contains(groupSizes[i]) == false){
-                allGroupSizes.add(groupSizes[i]);
+        int minPlantTime = Integer.MAX_VALUE;
+        int minPlantTimeIndex = -1;
+        for(int i = 0 ; i < plantTime.length ; ++i){
+            if(plantTime[i] < minPlantTime){
+                minPlantTime = plantTime[i];
+                minPlantTimeIndex = i;
             }
         }
+        List<Integer> plantingOrder = new ArrayList<>();
+        plantingOrder.add(minPlantTimeIndex);
 
-        Collections.sort(allGroupSizes);
+        for(int plant = 1 ; plant < plantTime.length ; ++plant){
 
-        List<List<Integer>> groups = new ArrayList<>();
+            int nextPlantIndex = -1;
+            int currentBestScore = 100;
+            for(int i = 0 ; i < plantTime.length ; ++i){
+                if(plantingOrder.contains(i))
+                    continue;
 
-        for(int i = 0 ; i < allGroupSizes.size() ; ++i){
-            int currentGroupSize = allGroupSizes.get(i);
-            groups.add(new ArrayList<>());
-            for(int j = 0 ;j < groupSizes.length ; ++j){
-                if(groupSizes[j] == currentGroupSize){
-                    if(groups.get(groups.size() - 1).size() >= currentGroupSize){
-                        groups.add(new ArrayList<>());
-                    }
-                    groups.get(groups.size() - 1).add(j);
+                if(plantTime[i] - growTime[i] < currentBestScore){
+                    nextPlantIndex = i;
+                    currentBestScore = plantTime[i] - growTime[i];
                 }
+
+
             }
+            plantingOrder.add(nextPlantIndex);
         }
 
-        return groups;
+
+
+
+
+        return result;
     }
 }
 
@@ -38,8 +48,9 @@ class Solution {
 public class Main {
     public static void main(String[] args) {
         Solution s = new Solution();
-        int[] arr = {3,3,3,3,3,1,3};
-        System.out.println(s.groupThePeople(arr));
+        int[] arr = {1,2,3,2};
+        int[] arr2 = {2,1,2,1};
+        System.out.println(s.earliestFullBloom(arr, arr2));
 
 
     }
