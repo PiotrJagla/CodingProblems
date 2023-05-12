@@ -5,57 +5,19 @@ import java.sql.PreparedStatement;
 import java.util.*;
 
 class Solution {
-    public List<Integer> spiralOrder(int[][] matrix) {
-        List<Integer> result = new ArrayList<>();
-
-        int Xdirection = 1;
-        int Ydirection = 0;
-
-        int Xpos = 0;
-        int Ypos = 0;
-
-        int maxLeft = 0;
-        int maxRight = matrix[0].length - 1;
-        int maxUp = 1;
-        int maxDown = matrix.length - 1;
-        for(int i = 0 ; i < matrix.length * matrix[0].length ; ++i){
-            result.add(matrix[Ypos][Xpos]);
-
-            Xpos += Xdirection;
-            Ypos += Ydirection;
-
-            if(Xpos > maxRight && Xdirection == 1){
-                Xdirection = 0;
-                Ydirection = 1;
-                Xpos--;
-                Ypos += Ydirection;
-                maxRight--;
-            }
-            else if(Xpos < maxLeft && Xdirection == -1){
-                Xdirection = 0;
-                Ydirection = -1;
-                Xpos++;
-                Ypos += Ydirection;
-                maxLeft++;
-            }
-            else if(Ypos > maxDown && Ydirection == 1){
-                Xdirection = -1;
-                Ydirection = 0;
-                Ypos--;
-                Xpos += Xdirection;
-                maxDown--;
-            }
-            else if(Ypos < maxUp && Ydirection == -1){
-                Ydirection = 0;
-                Xdirection = 1;
-                Ypos++;
-                Xpos += Xdirection;
-                maxUp++;
-            }
+    public int firstMissingPositive(int[] nums) {
 
 
+        HashSet<Integer> map = new HashSet<>();
+        for (int i = 0; i < nums.length; i++) {
+            map.add(nums[i]);
         }
-        return result;
+
+        for (int smallestPositiveInteger = 1; ; ++smallestPositiveInteger) {
+            if(map.contains(smallestPositiveInteger) == false){
+                return smallestPositiveInteger;
+            }
+        }
     }
 }
 
@@ -69,7 +31,7 @@ public class Main {
 
         int[][] matrix = {{1,2,3,4},{5,6,7,8},{9,10,11,12}};
 
-        System.out.println(s.spiralOrder(matrix));
+        System.out.println(s.firstMissingPositive(arr));
 
 
     }
