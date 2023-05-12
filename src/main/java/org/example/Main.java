@@ -6,6 +6,9 @@ import java.util.*;
 
 class Solution {
     public int trap(int[] height) {
+        if(height.length <= 2)
+            return 0;
+
         int result = 0;
 
         int maxValueIndex = 0;
@@ -15,26 +18,48 @@ class Solution {
             }
         }
 
+
+        int rightSideMaxHeight = 0;
+        int leftSideMaxHeight = 0;
+
+        if(maxValueIndex > 1){
+            rightSideMaxHeight = height[maxValueIndex];
+            leftSideMaxHeight = height[0];
+        }
+        else if(maxValueIndex == 0){
+            leftSideMaxHeight = height[maxValueIndex];
+            rightSideMaxHeight = Arrays.stream(Arrays.copyOfRange(height, 2, height.length)).max().getAsInt();
+        }
+        else if(maxValueIndex == 1){
+            leftSideMaxHeight = height[0];
+            rightSideMaxHeight = Arrays.stream(Arrays.copyOfRange(height, 2, height.length)).max().getAsInt();
+        }
+
+
+        int nextRightSideIndexCheck = 0;
         for (int i = 1; i < height.length - 1; i++) {
-
-            int highestToTheLeft = 0;
-            if(maxValueIndex < i){
-                highestToTheLeft = height[maxValueIndex];
-            }
-            else{
-                highestToTheLeft = Arrays.stream(Arrays.copyOfRange(height, 0, i)).max().getAsInt();
-            }
-
-            int highestToTheRight = 0;
-            if(maxValueIndex > i){
-                highestToTheRight = height[maxValueIndex];
-            }
-            else{
-                highestToTheRight = Arrays.stream(Arrays.copyOfRange(height, i+1, height.length)).max().getAsInt();
-            }
-
-            int minOfMaxes = Math.min(highestToTheRight, highestToTheLeft);
+            int minOfMaxes = Math.min(leftSideMaxHeight, rightSideMaxHeight);
             result += (minOfMaxes - height[i] > 0) ? minOfMaxes - height[i] : 0;
+
+            if(height[i] > leftSideMaxHeight){
+                leftSideMaxHeight = height[i];
+            }
+            if(rightSideMaxHeight == height[i+1] && nextRightSideIndexCheck <= i){
+                nextRightSideIndexCheck = i;
+                for(int j = i+1 ; j < height.length ; ++j){
+                    if(height[j] != rightSideMaxHeight){
+                        nextRightSideIndexCheck = j - 2;
+                        break;
+                    }
+
+                    if(j + 1 == height.length)
+                        nextRightSideIndexCheck = j;
+                }
+                if(i+2 < height.length){
+                    rightSideMaxHeight = Arrays.stream(Arrays.copyOfRange(height, i+2, height.length)).max().getAsInt();
+                }
+            }
+
         }
 
         return result;
@@ -46,7 +71,7 @@ public class Main {
     public static void main(String[] args) {
         Solution s = new Solution();
 
-        int[] arr = {27,5,24,17,27,4,23,16,6,26,13,17,21,3,9,10,28,26,4,10,28,2};
+        int[] arr = {9,6,8,8,5,6,3};
         int[] arr2 = {26,9,14,17,6,14,23,24,11,6,27,14,13,1,15,5,12,15,23,27,28,12};
 
         int[][] matrix = {{1,2,3,4},{5,6,7,8},{9,10,11,12}};
