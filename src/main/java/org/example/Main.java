@@ -1,83 +1,150 @@
 package org.example;
 
 
-import java.sql.PreparedStatement;
-import java.util.*;
-
-class Solution {
-    public int trap(int[] height) {
-        if(height.length <= 2)
-            return 0;
-
-        int result = 0;
-
-        int maxValueIndex = 0;
-        for (int i = 0; i < height.length; i++) {
-            if(height[maxValueIndex] < height[i]){
-                maxValueIndex = i;
-            }
-        }
 
 
-        int rightSideMaxHeight = 0;
-        int leftSideMaxHeight = 0;
+//class Solution {
+//    public int solution(int N) {
+//        for(int i = N + 1 ; ; ++i){
+//            if(sumAllDigitsOf(i) == 2* sumAllDigitsOf(N)){
+//                return i;
+//            }
+//        }
+//    }
+//    private int sumAllDigitsOf(int aNumber){
+//        int result = 0;
+//        for (int i = aNumber; i != 0 ; i /= 10) {
+//            result += i%10;
+//        }
+//        return result;
+//    }
+//}
+//
+//
+//
+//
+//class Solutionm {
+//    public int solution(int[] A) {
+//        int tailsCount = 0;
+//        int headsCount = 0;
+//        for (int i = 0; i < A.length; i++) {
+//            if(A[i] == 0){
+//                ++headsCount;
+//            }
+//            else if(A[i] == 1){
+//                ++tailsCount;
+//            }
+//        }
+//
+//        int half = A.length/2;
+//        int maxCount = Math.max(tailsCount, headsCount);
+//        int distanceToHalf = Math.abs( maxCount - half );
+//        return distanceToHalf;
+//    }
+//}
+//
+//
+//class Solutionmm {
+//    public int solution(int[] A) {
+//        int sum = 0;
+//        int summedIntegersCount = 0;
+//        for (int i = 0; i < A.length; i++) {
+//            if(A[i] > 0 && summedIntegersCount < 3){
+//                sum += A[i];
+//                summedIntegersCount++;
+//            }
+//        }
+//        return sum;
+//    }
+//}
 
-        if(maxValueIndex > 1){
-            rightSideMaxHeight = height[maxValueIndex];
-            leftSideMaxHeight = height[0];
-        }
-        else if(maxValueIndex == 0){
-            leftSideMaxHeight = height[maxValueIndex];
-            rightSideMaxHeight = Arrays.stream(Arrays.copyOfRange(height, 2, height.length)).max().getAsInt();
-        }
-        else if(maxValueIndex == 1){
-            leftSideMaxHeight = height[0];
-            rightSideMaxHeight = Arrays.stream(Arrays.copyOfRange(height, 2, height.length)).max().getAsInt();
-        }
+import java.util.Scanner;
 
+class Point2D{
+    private int x;
+    private int y;
 
-        int nextRightSideIndexCheck = 0;
-        for (int i = 1; i < height.length - 1; i++) {
-            int minOfMaxes = Math.min(leftSideMaxHeight, rightSideMaxHeight);
-            result += (minOfMaxes - height[i] > 0) ? minOfMaxes - height[i] : 0;
+    public Point2D(int x, int y) {
+        this.x = x;
+        this.y = y;
+    }
 
-            if(height[i] > leftSideMaxHeight){
-                leftSideMaxHeight = height[i];
-            }
-            if(rightSideMaxHeight == height[i+1] && nextRightSideIndexCheck <= i){
-                nextRightSideIndexCheck = i;
-                for(int j = i+1 ; j < height.length ; ++j){
-                    if(height[j] != rightSideMaxHeight){
-                        nextRightSideIndexCheck = j - 2;
-                        break;
-                    }
+    public int getX() {
+        return x;
+    }
 
-                    if(j + 1 == height.length)
-                        nextRightSideIndexCheck = j;
-                }
-                if(i+2 < height.length){
-                    rightSideMaxHeight = Arrays.stream(Arrays.copyOfRange(height, i+2, height.length)).max().getAsInt();
-                }
-            }
+    public void setX(int x) {
+        this.x = x;
+    }
 
-        }
+    public int getY() {
+        return y;
+    }
 
-        return result;
+    public void setY(int y) {
+        this.y = y;
     }
 }
 
-
 public class Main {
+
+    public static boolean canBeTriangle(Point2D A,Point2D B,Point2D C){
+        double sideAB = Math.sqrt( (B.getX() - A.getX())*(B.getX() - A.getX()) + (B.getY() - A.getY())*(B.getY() - A.getY()) );
+        double sideBC = Math.sqrt( (C.getX() - B.getX())*(C.getX() - B.getX()) + (C.getY() - B.getY())*(C.getY() - B.getY()) );
+        double sideAC = Math.sqrt( (A.getX() - C.getX())*(A.getX() - C.getX()) + (A.getY() - C.getY())*(A.getY() - C.getY()) );
+
+        if(sideAB < sideBC + sideAC){
+            return true;
+        }
+        else if(sideBC < sideAB + sideAC){
+            return true;
+        }
+        else if(sideAC < sideAB + sideBC){
+            return true;
+        }
+
+        return false;
+    }
+
+    private static int getIntInput(String title) {
+        Scanner in = new Scanner(System.in);
+        System.out.println(title);
+        int result = -1;
+        for (int i = 0; i < 3; ++i) {
+            try {
+                result = Integer.parseInt(in.next());
+                break;
+            } catch (IllegalArgumentException e) {
+                System.out.println("Wprowadzono zla wartosc");
+            }
+
+        }
+        if(result == -1){
+            System.exit(1);
+        }
+        return result;
+    }
+
+
+
     public static void main(String[] args) {
-        Solution s = new Solution();
 
-        int[] arr = {9,6,8,8,5,6,3};
-        int[] arr2 = {26,9,14,17,6,14,23,24,11,6,27,14,13,1,15,5,12,15,23,27,28,12};
+        Scanner in = new Scanner(System.in);
+        Point2D A = new Point2D(0,0);
+        Point2D B = new Point2D(0,0);
+        Point2D C = new Point2D(0,0);
 
-        int[][] matrix = {{1,2,3,4},{5,6,7,8},{9,10,11,12}};
+        A.setX(getIntInput("get A x: "));
+        A.setY(getIntInput("get A y: "));
 
-        System.out.println(s.trap(arr));
+        B.setX(getIntInput("get B x: "));
+        B.setY(getIntInput("get B y: "));
 
+        C.setX(getIntInput("get C x: "));
+        C.setY(getIntInput("get C y: "));
+
+
+        System.out.println(canBeTriangle(A,B,C));
 
     }
 }
