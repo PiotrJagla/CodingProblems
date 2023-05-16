@@ -7,42 +7,34 @@ import java.util.Enumeration;
 
 class Solution {
     public int calculateMinimumHP(int[][] dungeon) {
-        int healthLost = 0;
-        int minHealth = dungeon[0][0];
+        int[][] dp = new int[dungeon.length][dungeon[0].length];
+        dp[dungeon.length-1][dungeon[0].length-1] = dungeon[dungeon.length-1][dungeon[0].length-1];
 
-        int Xpos = 0;
-        int Ypos = 0;
-        while(Xpos != dungeon[0].length - 1 || Ypos != dungeon.length - 1){
-            healthLost += dungeon[Ypos][Xpos];
-            if(healthLost < minHealth){
-                minHealth = healthLost;
-            }
+        for(int y = dungeon.length - 1 ; y >= 0 ; --y){
+            for (int x = dungeon[0].length - 1; x >= 0; x--) {
+                if(x == dungeon[0].length - 1 && y == dungeon.length - 1)
+                    continue;
 
-            if(Xpos == dungeon[0].length - 1){
-                Ypos++;
-            }
-            else if(Ypos == dungeon.length - 1){
-                Xpos++;
-            }
-            else if(dungeon[Ypos + 1][Xpos] >= dungeon[Ypos][Xpos + 1]){
-                Ypos++;
-            }
-            else if(dungeon[Ypos + 1][Xpos] < dungeon[Ypos][Xpos + 1]){
-                Xpos++;
-            }
+                int currentDungeon = dungeon[y][x];
+                int downHpLoss = -99999;
+                if(y + 1 < dungeon.length){
+                    downHpLoss = Math.min(dp[y+1][x], 0);
+                }
+                int rightHpLoss = -99999;
+                if(x + 1 < dungeon[0].length){
+                    rightHpLoss = Math.min( dp[y][x+1], 0);
+                }
+                int res = currentDungeon + Math.max(rightHpLoss, downHpLoss);
+                dp[y][x] = Math.min(res, 0);
 
 
+            }
         }
 
-        healthLost += dungeon[Ypos][Xpos];
-        if(healthLost < minHealth){
-            minHealth = healthLost;
-        }
-
-        if(minHealth > 0)
+        if(dp[0][0] > 0){
             return 1;
-
-        return Math.abs(minHealth) + 1;
+        }
+        return Math.abs(dp[0][0]) + 1;
     }
 }
 
