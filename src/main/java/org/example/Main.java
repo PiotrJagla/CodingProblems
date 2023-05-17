@@ -6,35 +6,31 @@ import java.util.Enumeration;
 
 
 class Solution {
-    public int calculateMinimumHP(int[][] dungeon) {
-        int[][] dp = new int[dungeon.length][dungeon[0].length];
-        dp[dungeon.length-1][dungeon[0].length-1] = dungeon[dungeon.length-1][dungeon[0].length-1];
+    public boolean canJump(int[] nums) {
+        if(nums.length == 1){
+            return true;
+        }
+        if(nums[0] == 0){
+            return false;
+        }
 
-        for(int y = dungeon.length - 1 ; y >= 0 ; --y){
-            for (int x = dungeon[0].length - 1; x >= 0; x--) {
-                if(x == dungeon[0].length - 1 && y == dungeon.length - 1)
-                    continue;
+        for (int i = 0; ; ) {
+            int maxJump = nums[i];
 
-                int currentDungeon = dungeon[y][x];
-                int downHpLoss = -99999;
-                if(y + 1 < dungeon.length){
-                    downHpLoss = Math.min(dp[y+1][x], 0);
+            if(i + nums[i] >= nums.length - 1)
+                return true;
+
+            int maxNextJumpIndex = i + 1;
+            for(int j = i + 2 ; j <= maxJump + i ; ++j){
+                if(nums[maxNextJumpIndex] <= nums[j]){
+                    maxNextJumpIndex = j;
                 }
-                int rightHpLoss = -99999;
-                if(x + 1 < dungeon[0].length){
-                    rightHpLoss = Math.min( dp[y][x+1], 0);
-                }
-                int res = currentDungeon + Math.max(rightHpLoss, downHpLoss);
-                dp[y][x] = Math.min(res, 0);
-
-
             }
-        }
+            i = maxNextJumpIndex;
 
-        if(dp[0][0] > 0){
-            return 1;
+            if(nums[maxNextJumpIndex] == 0)
+                return false;
         }
-        return Math.abs(dp[0][0]) + 1;
     }
 }
 
@@ -43,6 +39,7 @@ public class Main {
 
         Solution s = new Solution();
         int[][] arr = {{-2,-3,3},{-5,-10,1},{10,30,-5}};
-        System.out.println(s.calculateMinimumHP(arr));
+        int[] arrr = {4,2,0,0,1,1,4,4,4,0,4,0};
+        System.out.println(s.canJump(arrr));
     }
 }
