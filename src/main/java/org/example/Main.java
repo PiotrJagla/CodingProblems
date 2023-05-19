@@ -6,72 +6,57 @@ import java.util.*;
 
 class Solution {
     public List<List<Integer>> getSkyline(int[][] buildings) {
+        int start = 0;
+        int end = 1;
+        int height = 2;
         List<List<Integer>> skyline = new ArrayList<>();
 
-        HashSet<Integer> allPositions = new HashSet<>();
+        int[][] points = new int[buildings.length * 2][3];
+
         for (int i = 0; i < buildings.length; i++) {
-            int biggestHeightOnLeft = 0;
-            for (int j = 0; j < buildings.length; j++) {
-                if(buildings[i][0] >= buildings[j][0] && buildings[i][0] <= buildings[j][1] &&
-                    buildings[j][2] > biggestHeightOnLeft){
-                    biggestHeightOnLeft =buildings[j][2];
+            points[i * 2][0] = buildings[i][start];
+            points[i * 2][1] = buildings[i][height];
+            points[i * 2][2] = start;
+
+            points[i*2 + 1][0] = buildings[i][end];
+            points[i*2 + 1][1] = buildings[i][height];
+            points[i*2 + 1][2] = end;
+        }
+
+        Arrays.sort(points, new Comparator<int[]>() {
+            @Override
+            public int compare(int[] o1, int[] o2) {
+                if(o1[0] != o2[0]){
+                    return Integer.compare(o1[0], o2[0]);
+                }else{
+                    return (o1[2] == start ? -o1[1] : o1[1]) - (o2[2] == start ? -o2[1] : o2[1]);
                 }
-            }
-
-            if(biggestHeightOnLeft == buildings[i][2]){
-                if(skyline.size() == 0){
-                    if(allPositions.contains(buildings[i][0]) == false){
-                        skyline.add(new ArrayList<>());
-                        skyline.get(skyline.size() - 1).add(buildings[i][0]);
-                        skyline.get(skyline.size() - 1).add(biggestHeightOnLeft);
-                        allPositions.add(buildings[i][0]);
-                    }
-
-                }
-                else{
-                    if(biggestHeightOnLeft != skyline.get(skyline.size() - 1).get(1)){
-                        if(allPositions.contains(buildings[i][0]) == false){
-                            skyline.add(new ArrayList<>());
-                            skyline.get(skyline.size() - 1).add(buildings[i][0]);
-                            skyline.get(skyline.size() - 1).add(biggestHeightOnLeft);
-                            allPositions.add(buildings[i][0]);
-                        }
-
-                    }
-                }
-
 
             }
+        });
 
-
-            int otherBiggestHeightOnRight = 0;
-            int otherBiggestRightPos = 0;
-            for (int j = 0; j < buildings.length; j++) {
-                if(buildings[i][1] >= buildings[j][0] && buildings[i][1] <= buildings[j][1] &&
-                        buildings[j][2] > otherBiggestHeightOnRight && i != j){
-                    otherBiggestHeightOnRight = buildings[j][2];
-                    otherBiggestRightPos = buildings[j][1];
-                }
-            }
-
-            if(otherBiggestHeightOnRight == buildings[i][2] && otherBiggestRightPos == buildings[i][1]){
-                otherBiggestHeightOnRight = 0;
-            }
-
-            if(otherBiggestHeightOnRight < buildings[i][2]){
-                if(otherBiggestRightPos == buildings[i][1]){
-                    otherBiggestHeightOnRight = 0;
-
-                }
-                if(allPositions.contains(buildings[i][1]) == false){
+        PriorityQueue<Integer> pointsQueue = new PriorityQueue<>((a,b) -> b - a);
+        pointsQueue.offer(0);
+        int currentMax = 0;
+        for (int i = 0; i < points.length; i++) {
+            if(points[i][2] == start){
+                pointsQueue.offer(points[i][1]);
+                if(currentMax != pointsQueue.peek()){
                     skyline.add(new ArrayList<>());
-                    skyline.get(skyline.size() - 1).add(buildings[i][1]);
-                    skyline.get(skyline.size() - 1).add(otherBiggestHeightOnRight);
-                    allPositions.add(buildings[i][1]);
+                    skyline.get(skyline.size() - 1).add(points[i][0]);
+                    skyline.get(skyline.size() - 1).add(pointsQueue.peek());
+                    currentMax = pointsQueue.peek();
                 }
-
             }
-
+            else if(points[i][2] == end){
+                pointsQueue.remove(points[i][1]);
+                if(currentMax != pointsQueue.peek()){
+                    skyline.add(new ArrayList<>());
+                    skyline.get(skyline.size() - 1).add(points[i][0]);
+                    skyline.get(skyline.size() - 1).add(pointsQueue.peek());
+                    currentMax = pointsQueue.peek();
+                }
+            }
 
         }
         return skyline;
