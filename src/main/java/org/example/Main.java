@@ -1,11 +1,18 @@
 package org.example;
 
-class MultiThreadThing extends Thread{
+class MultiThreadThing implements Runnable{
+
+
+
+    private int threadNumber;
+    public MultiThreadThing(int threadNumber) {
+        this.threadNumber = threadNumber;
+    }
 
     @Override
     public void run() {
         for (int i = 1; i <= 5; i++) {
-            System.out.println(i);
+            System.out.println(i + " from thread " + threadNumber);
 
             try {
                 Thread.sleep(1000);
@@ -18,13 +25,20 @@ class MultiThreadThing extends Thread{
 
 public class Main {
 
-    public static void main(String[] args) {
-        MultiThreadThing myThing = new MultiThreadThing();
-        MultiThreadThing myThing2 = new MultiThreadThing();
+    public static void main(String[] args) throws InterruptedException {
+        for (int i = 0; i < 4; i++) {
+            MultiThreadThing myThing = new MultiThreadThing(i);
+            Thread myThread = new Thread(myThing);
+            myThread.setPriority(i + 1);
+            myThread.start();
 
 
-        myThing.start();
-        myThing2.run();
+        }
+        System.out.println(Thread.activeCount());
+        System.out.println(Thread.currentThread().getName());
+
+
+
 
     }
 }
