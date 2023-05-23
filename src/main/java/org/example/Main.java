@@ -6,66 +6,46 @@ import java.util.Collections;
 import java.util.List;
 
 class Solution {
-    public int[][] insert(int[][] intervals, int[] newInterval) {
+    public int minPathSum(int[][] grid) {
+        int[][] dp = new int[grid.length][grid[0].length];
 
-        if(intervals.length == 0){
-            return new int[][]{{newInterval[0], newInterval[1]}};
-        }
 
-        List<int[]> result = new ArrayList<>();
 
-        for (int i = 0; i < intervals.length; i++) {
-            result.add(intervals[i]);
-        }
-
-        if(newInterval[1] < intervals[0][0]){
-            result.add(0, newInterval);
-            return result.toArray(new int[result.size()][2]);
-        }
-
-        if(newInterval[0] > intervals[intervals.length - 1][1]){
-            result.add(newInterval);
-            return result.toArray(new int[result.size()][2]);
-        }
-        
-        
-
-        result = new ArrayList<>();
-
-        int[] intervalToInsert = newInterval;
-        for (int i = 0; i < intervals.length; i++) {
-
-            if(intervals[i][0] > newInterval[1]){
-                result.add(newInterval);
-                for (int j = i; j < intervals.length; j++) {
-                    result.add(intervals[j]);
+        for (int i = grid.length - 1; i >= 0; i--) {
+            for (int j = grid[0].length -1; j >= 0; j--) {
+                int down = Integer.MAX_VALUE;
+                int right = Integer.MAX_VALUE;
+                if(i + 1 < grid.length){
+                    down = dp[i + 1][j];
                 }
-                return result.toArray(new int[result.size()][2]);
-            }
-            else if(intervals[i][1] < newInterval[0]){
-                result.add(intervals[i]);
-            }
-            else {
-                newInterval[0] = Math.min(newInterval[0], intervals[i][0]);
-                newInterval[1] = Math.max(newInterval[1], intervals[i][1]);
-            }
+                if(j+1 < grid[0].length){
+                    right = dp[i][j + 1];
+                }
 
+                dp[i][j] = grid[i][j];
+
+                if(down != Integer.MAX_VALUE || right != Integer.MAX_VALUE){
+                    dp[i][j] += Math.min(right, down);
+                }
+
+            }
         }
 
-        result.add(newInterval);
-
-        return result.toArray(new int[result.size()][2]);
+        return dp[0][0];
     }
 }
+
+
+
 public class Main {
 
 
     public static void main(String[] args) {
         Solution s = new Solution();
         int[] arr = {10,22};
-        int[][] arrr = {{4,5},{9,12}, {14,18}, {20,26}, {30,37}};
+        int[][] arrr = {{1,3,1},{1,5,1},{4,2,1}};
 
-        System.out.println(Arrays.deepToString(s.insert(arrr,arr)));
+        System.out.println(s.minPathSum(arrr));
     }
 
 }
