@@ -1,51 +1,38 @@
 package org.example;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 class Solution {
-    public int minPathSum(int[][] grid) {
-        int[][] dp = new int[grid.length][grid[0].length];
+    public int rob(int[] nums) {
+        int[] memo = new int[nums.length];
+        Arrays.fill(memo, -1);
+        return rob(nums, nums.length - 1, memo);
+    }
 
+    private int rob(int[] nums, int index, int[] memo){
+        if(index < 0)
+            return 0;
 
+        if(memo[index] >= 0)
+            return memo[index];
 
-        for (int i = grid.length - 1; i >= 0; i--) {
-            for (int j = grid[0].length -1; j >= 0; j--) {
-                int down = Integer.MAX_VALUE;
-                int right = Integer.MAX_VALUE;
-                if(i + 1 < grid.length){
-                    down = dp[i + 1][j];
-                }
-                if(j+1 < grid[0].length){
-                    right = dp[i][j + 1];
-                }
-
-                dp[i][j] = grid[i][j];
-
-                if(down != Integer.MAX_VALUE || right != Integer.MAX_VALUE){
-                    dp[i][j] += Math.min(right, down);
-                }
-
-            }
-        }
-
-        return dp[0][0];
+        int res = Math.max(rob(nums, index-2, memo) + nums[index], rob(nums, index - 1, memo));
+        memo[index] = res;
+        return res;
     }
 }
-
-
 
 public class Main {
 
 
     public static void main(String[] args) {
         Solution s = new Solution();
-        int[] arr = {10,22};
+        int[] arr = {1,2,3,1};
         int[][] arrr = {{1,3,1},{1,5,1},{4,2,1}};
 
-        System.out.println(s.minPathSum(arrr));
+        System.out.println(s.rob(arr));
     }
 
 }
